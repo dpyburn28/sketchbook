@@ -9,6 +9,7 @@ const mainCanvas = new myCanvas(
     pos=[(backgroundCanvas.width-res[0])/2, (backgroundCanvas.height-res[1])/2],
     color=[255, 255, 255, 1]
 )
-mainCanvas.brush.cursor = [mainCanvas.width/2,mainCanvas.height/2]
-mainCanvas.brush.draw()
+mainCanvas.brush.ctx.lineWidth = 10
+mainCanvas.brush.pather.connectAnchor = true
+mainCanvas.brush.draw("diamond", [1, 1])
 mainCanvas.brush.ctx.stroke()
