@@ -10,5 +10,5 @@ const mainCanvas = new myCanvas(
     color=[255, 255, 255, 1]
 )
 
-mainCanvas.brush.paths.diamond()
+mainCanvas.brush.paths.box()
 mainCanvas.brush.ctx.stroke()
