@@ -11,19 +11,27 @@ const mainCanvas = new myCanvas(
 )
 
 // Initialize and Start timer
-let timer = new Timer(MS)
-timer.start()
+let timer = new Timer(MS * 100)
 
-mainCanvas.brush.ctx.lineWidth = 1
-mainCanvas.brush.pather.connectAnchor = true
 
-let increasePoints = () => {
-    let numPoints = Math.sin(timer.value)
-    console.log(numPoints)
+mainCanvas.brush.ctx.lineWidth = 5
+mainCanvas.brush.pather.connectAnchor = false
+
+let increasePoints = (range=[0, 100]) => {
+    min = range[0]
+    max = range[1]
+    range = max - min
+    let numPoints = min + (timer.value % max)
+    let timerSin = Math.sin(timer.value / timer.rate)
+    numPoints = Math.floor(timerSin * (range/2)) + min + (range/2)
     mainCanvas.clear()
     mainCanvas.brush.draw("spiral", [r=200, swirl=20, numPoints=numPoints])
     mainCanvas.brush.ctx.stroke()
 }
-setInterval(increasePoints, 100)
 
-
+// Interval
+let interval = () => {
+    timer.interval()
+    increasePoints(range=[20, 100])
+}
+setInterval(interval, timer.rate)
