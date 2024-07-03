@@ -11,19 +11,21 @@ const mainCanvas = new myCanvas(
 )
 
 // Initialize and Start timer
-let timer = new Timer(MS * 50)
+let timer = new Timer(MS * 30)
 
 
-mainCanvas.brush.ctx.lineWidth = .05
+
 mainCanvas.brush.pather.connectAnchor = false
 
-let increasePoints = (range=[0, 100]) => {
-    min = range[0]
-    max = range[1]
-    range = max - min
-    let numPoints = min + (timer.value % max)
-    let timerSin = Math.sin(timer.value / timer.rate)
-    numPoints = Math.floor(timerSin * (range/2)) + min + (range/2)
+let sinWavePoints = (range=[0, 60]) => {
+    let numPoints = sine(range)
+    console.log(numPoints)
+    mainCanvas.brush.draw("spiral", [r=200, swirl=20, numPoints=numPoints])
+    mainCanvas.brush.ctx.stroke()
+}
+let cosWavePoints = (range=[0, 100]) => {
+    let numPoints = cose(range)
+    console.log(numPoints)
     mainCanvas.brush.draw("spiral", [r=200, swirl=20, numPoints=numPoints])
     mainCanvas.brush.ctx.stroke()
 }
@@ -31,7 +33,31 @@ let increasePoints = (range=[0, 100]) => {
 // Interval
 let interval = () => {
     timer.interval()
-    mainCanvas.clear(.1)
-    increasePoints(range=[0, 200])
+    mainCanvas.clear(1)
+    mainCanvas.brush.ctx.strokeStyle = "rgba(0,0,0)"
+    mainCanvas.brush.ctx.lineWidth = 1
+    cosWavePoints(range=[0, 300])
+    mainCanvas.brush.ctx.strokeStyle = "rgba(255,255,255)"
+    mainCanvas.brush.ctx.lineWidth = 3
+    sinWavePoints(range=[50, 300])
+    
 }
 setInterval(interval, timer.rate)
+
+// Functions
+function sine(range=[0, 100], offset=0,) {
+    let min = range[0]
+    let max = range[1]
+    range = max - min
+    let value = (timer.value/timer.rate) % max
+    let sinValue = (Math.sin(value)*(range/2)) + min + (range/2) + offset
+    return Math.floor(sinValue)
+}
+function cose(range=[0, 100], offset=0,) {
+    let min = range[0]
+    let max = range[1]
+    range = max - min
+    let value = (timer.value/timer.rate) % max
+    let sinValue = (Math.cos(value)*(range/2)) + min + (range/2) + offset
+    return Math.floor(sinValue)
+}
