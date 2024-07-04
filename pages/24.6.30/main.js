@@ -36,7 +36,7 @@ let spirals = {
     typeA: (radius=200) => {
         waveArgs = [cos, range=300, offset=50]
         swirlArgs = [radius, swirl=100]
-        styleArgs = [weight=2, colors=[stroke=[255,0,0,1], fill=[255,0,0,1]], true, true]
+        styleArgs = [weight=2, colors=[stroke=[0,0,0,1], fill=[255,0,0,1]], true, true]
         let args = [waveArgs, swirlArgs, styleArgs]
         spiral(waveArgs, swirlArgs, styleArgs)
         waveArgs = [tan, range, 50]
@@ -48,33 +48,34 @@ let spirals = {
     typeB: (radius=250) => {
         waveArgs = [cos, range=100, offset=0]
         swirlArgs = [radius, swirl=50]
-        styleArgs = [weight=5, colors=[stroke=[20,0,0,1], fill=[0,0,0,1]], true, true]
+        styleArgs = [weight=5, colors=[stroke=[255,0,0,1], fill=[0,0,0,1]], true, true]
         let args = [waveArgs, swirlArgs, styleArgs]
         spiral(waveArgs, swirlArgs, styleArgs)
         waveArgs = [tan, range, 0]
         swirlArgs = [radius, swirl]
-        styleArgs = [weight/25, colors=[stroke=[20,0,0,1], fill=[0,0,0,1]], true, true]
+        styleArgs = [weight/25, colors=[stroke=[255,255,255,1], fill=[0,0,0,1]], true, true]
         spiral(waveArgs, swirlArgs, styleArgs)
         return args
     },
     typeC: (radius=250) => {
         waveArgs = [cos, range, 0]
         swirlArgs = [radius, 1]
-        styleArgs = [weight, colors=[stroke=[20,0,0,1], fill=[0,0,0,1]], true, true]
+        styleArgs = [weight, colors=[stroke=[20,0,0,1], fill=[255,0,0,1]], false, false]
         spiral(waveArgs, swirlArgs, styleArgs)
-        return [waveArgs, swirlArgs, styleArgs]
+        let args = [waveArgs, swirlArgs, styleArgs]
+        return args
     },
     typeD: (radius=200) => {
         waveArgs = [sin, 30, 2]
         swirlArgs = [radius, 3]
-        styleArgs = [3, colors=[stroke=[20,0,0,1], fill=[0,0,0,1]], false, true]
+        styleArgs = [3, colors=[stroke=[255,255,255,1], fill=[0,0,0,1]], false, true]
         spiral(waveArgs, swirlArgs, styleArgs)
         return [waveArgs, swirlArgs, styleArgs]
     },
     typeE: (radius=200) => {
         waveArgs = [sin, 50, 15]
         swirlArgs = [radius, 10]
-        styleArgs = [1, colors=[stroke=[20,0,0,1], fill=[0,0,0,1]], false, true]
+        styleArgs = [1, colors=[stroke=[255,255,255,1], fill=[0,0,0,1]], false, true]
         spiral(waveArgs, swirlArgs, styleArgs)
         return [waveArgs, swirlArgs, styleArgs]
     }
@@ -103,46 +104,55 @@ let interval = () => {
         y = r + cellHeight/2
         x = c + cellWidth/2
         mainCanvas.brush.cursorX = x
+        mainCanvas.brush.cursorY = (mainCanvas.height/2) - 50
         let args = spiral(cellWidth/2)
-        if(displayParameters) {drawParameters(args, [c, y], 14, index)}
+        if(displayParameters) {drawParameters(args, [c + 25, y], 14, index)}
     })
-    
+    //
+    x = 25
+    y = mainCanvas.height - mainCanvas.height/2 + 100
+    let size = 14
+    let temp;
+    temp = drawFunction(spiral, pos=[x, y], size)
+    temp = drawFunction(wavePoints, [x, temp[1]], size)
+    temp = drawFunction(wave, [x, temp[1]], size)
+    temp = drawFunction(mainCanvas.brush.draw, [temp[0] + 10, y], size)
+    drawFunction(Paths[2][1], [temp[0] + 400, y], size)
 }
 setInterval(interval, timer.rate)
 
 
 
 // Functions
-function spiral(waveArgs=[wave=sin, range=300, offset=0], spiralArgs=[radius=200, swirl=20], styleArgs=[weight=1, colors=[[0,0,0], [0,0,0]], closed=false, fill=false]) {
-    let ctx = mainCanvas.brush.ctx
-    ctx.lineWidth = styleArgs[0]
-    mainCanvas.brush.colors = styleArgs[1]
-    mainCanvas.brush.pather.closePath = styleArgs[2]
-    mainCanvas.brush.pather.isFill = styleArgs[3]
-    wavePoints(waveArgs, spiralArgs)
-}
-function wavePoints(waveArgs=[type=sin, range, offset], spiralArgs) {
-    let numPoints = wave(waveArgs[0], waveArgs[1], waveArgs[2])
-    spiralArgs.push(numPoints)
-    mainCanvas.brush.draw("spiral", spiralArgs)
-    mainCanvas.brush.ctx.stroke()
-}
-function wave(func=Math.sin, range=100, offset=100) {
-    let value = (timer.value/timer.rate) % (offset + range)
-    let waveValue = Math.floor((func(value)*range/2) + offset + (range/2))
-    return waveValue
-}
+function spiral(waveArgs, spiralArgs, styleArgs) {
+    let ctx = mainCanvas.brush.ctx;
+    ctx.lineWidth = styleArgs[0];
+    mainCanvas.brush.pallete = styleArgs[1];
+    mainCanvas.brush.pather.closePath = styleArgs[2];
+    mainCanvas.brush.pather.isFill = styleArgs[3];
+    wavePoints(waveArgs, spiralArgs);
+};
+function wavePoints(waveArgs, spiralArgs) {
+    let numPoints = wave(waveArgs[0], waveArgs[1], waveArgs[2]);
+    spiralArgs.push(numPoints);
+    mainCanvas.brush.draw("spiral", spiralArgs);
+    mainCanvas.brush.ctx.stroke();
+};
+function wave(func, range, offset) {
+    let value = (timer.value/timer.rate) % (offset + range);
+    let waveValue = Math.floor((func(value)*range/2) + offset + (range/2));
+    return waveValue;
+};
 
 function drawParameters(args, pos, size, spiralIndex) {
     let ctx = mainCanvas.brush.ctx
     ctx.font = size + "px serif"
     let waveArgs = args[0]
     let swirlArgs = args[1]
-    swirlArgs.pop()
     let styleArgs = args[2]
-    let y = 0
+    let y = 10
     ctx.fillStyle="red"
-    ctx.fillText("waveArgs", pos[0], size)
+    ctx.fillText("waveArgs", pos[0], y+=size)
     waveArgs.forEach(arg => {
         ctx.fillStyle = "black"
         let index = waveArgs.indexOf(arg)
@@ -157,7 +167,7 @@ function drawParameters(args, pos, size, spiralIndex) {
             case 2:
                 str = "θOffset: "
         }
-        ctx.fillText(str + arg, pos[0], y = (size)+size + (index * size))
+        ctx.fillText(str + arg, pos[0], y += size)
     })
     ctx.fillStyle="red"
     ctx.fillText("swirlArgs", pos[0], y = y + size)
@@ -172,15 +182,16 @@ function drawParameters(args, pos, size, spiralIndex) {
             case 1:
                 str = "swrl: "
                 break;
+            case 2:
+                str= "numPoints: "
         }
-        ctx.fillText(str + arg, pos[0], y+size + (index * size))
+        ctx.fillText(str + arg, pos[0], y+=size)
     })
     ctx.fillStyle = "red"
-    ctx.fillText("styleArgs", pos[0], y+size + (swirlArgs.length * size))
+    ctx.fillText("styleArgs", pos[0], y+=size)
     let index = 0
     styleArgs.forEach(arg => {
         ctx.fillStyle = "black"
-        console.log(arg)
         let str;
         switch(index) {
             case 0:
@@ -188,9 +199,9 @@ function drawParameters(args, pos, size, spiralIndex) {
                 break;
             case 1:
                 y+=size
-                str = "strokeColor: [r=" + arg[0][0] + ",g=" + arg[0][1] + ",b=" + arg[0][2] + ",a=" + arg[0][3] + "]"
-                ctx.fillText(str, pos[0], (size * 2) + y+size + (index * size))
-                str = "fillColor: [r=" + arg[1][0] + ",g=" + arg[1][1] + ",b=" + arg[1][2] + ",a=" + arg[1][3] + "]"
+                str = "strokeColor: [r=" + arg[0][0] + " g=" + arg[0][1] + " b=" + arg[0][2] + " a=" + arg[0][3] + "]"
+                ctx.fillText(str, pos[0], y)
+                str = "fillColor: [r=" + arg[1][0] + " g=" + arg[1][1] + " b=" + arg[1][2] + " a=" + arg[1][3] + "]"
                 break;
             case 2:
                 str = "closePath: " + arg
@@ -200,6 +211,40 @@ function drawParameters(args, pos, size, spiralIndex) {
                 break;
         }
         index++
-        ctx.fillText(str, pos[0], (size * 2) + y+size + (index * size))
+        ctx.fillText(str, pos[0], y += size)
     })
+}
+
+function drawFunction(func, pos, size) {
+    let ctx = mainCanvas.brush.ctx
+    let str = func.toString()
+    let name = str.slice(0, str.indexOf("("))
+    let parameters = str.slice(str.indexOf("("), str.indexOf(")") + 1)
+    let body = str.slice(str.indexOf("{"))
+    let lines = body.split(";")
+    w = 0
+    h = pos[1]
+    let y = pos[1]
+    ctx.font = size + "px serif"
+    ctx.fillStyle = "red"
+    if(name=="draw") {name="brush.draw"}
+    if(name) ctx.fillText(name, pos[0], y += size);
+    else {ctx.fillText(name="Paths.spiral", pos[0], y += size)};
+    w = ctx.measureText(name).width
+    h += size
+    ctx.fillStyle = "blue"
+    ctx.fillText(parameters="parameters " + parameters, pos[0], y += size)
+    let paramWidth = ctx.measureText(parameters).width
+    if(paramWidth > w) {w = paramWidth}
+    h += size
+    ctx.fillStyle = "black"
+    lines.forEach(line => {
+        // console.log(line)
+        let index = lines.indexOf(line)
+        ctx.fillText(line, pos[0], y += size)
+        let lineWidth = ctx.measureText(line).width
+        if(lineWidth > w) {w = lineWidth}
+        h += size
+    })
+    return [w, h]
 }
