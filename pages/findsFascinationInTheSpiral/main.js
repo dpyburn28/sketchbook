@@ -2,7 +2,7 @@
 
 
 // Initialize and Start timer
-let timer = new Timer(MS * 30)
+let timer = new Timer(MS * 75)
 
 roundTo = 100
 const sin = (value=(timer.value * timer.rate)) => {return Math.sin(value)}
