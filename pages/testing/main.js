@@ -1,29 +1,29 @@
 
-let timer = new Timer(SECONDS)
+let timer = new Timer(MS*100)
 
 let canvas = new myCanvas(
     res=[window.innerWidth, window.innerHeight],
     pos=[0,0],
-    color=[255,255,255]
+    color=[1,1,1]
 )
 
 let brush = canvas.brush = new Brush(canvas)
 
-let p1 = [.5, .75]
+let p1 = [.25, .75]
 let p2 = [.75, .75]
-let p3 = [.75, .5]
-let p4 = [.5, .5]
+let c1 = [.75, .25]
+let c2 = [.25, .25]
 
 brush.presets("pencil")
 brush.isPaint = false
-brush.weight = 30
-brush.line([p1, p2, p3, p4])
+// brush.weight = 30
+brush.closer = true
 
-brush.presets("eraser")
-brush.weight = 8
-brush.isPaint = false
-brush.line([p1, p2, p3, p4])
-
-brush.presets("pen")
-brush.isPaint = false
-brush.line([p1, p2, p3, p4])
+brush.closer = false
+// brush.curve([p1, c1, c2, p2])
+brush.presets("brush")
+let interval = () => {
+    canvas.clear()
+    brush.line([p1, c1, c2, p2])
+}
+timer.startInterval(interval)
