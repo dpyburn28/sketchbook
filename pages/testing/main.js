@@ -8,42 +8,22 @@ let canvas = new myCanvas(
 )
 
 let brush = canvas.brush = new Brush(canvas)
-brush.isPaint = true
-brush.weight = .5
-brush.lineCap = "round"
 
-let p1 = [.5, 1]
-let p2 = [1, .5]
-let ground = (height) => {
-    let p1 = [0, 1-height]
-    let p2 = [1, 1-height]
-    brush.line([p1, p2])
-    let hHatch = (numShadows) => {
-        for(let i = 0; i < numShadows; i++) {
-            let hMod = ((height/numShadows)*i)
-            p1[1] = p2[1] = (1-height) + hMod
-            brush.line([p1, p2])
-        }
-    }
-    hHatch(30)
-    let vHatch = (numShadows) => {
-        for(let i = 0; i < numShadows; i++) {
-            let hMod = ((1/numShadows)*i)
-            p1[1] = (1-height)
-            p2[1] = 1
-            p1[0] = p2[0] = hMod
-            brush.line([p1, p2])
-        }
-    }
-    vHatch(40)
-    let fill = () => {
-        let p3 = [1, 1]
-        let p4 = [0, 0]
-        brush.isPaint = true
-        brush.line([p1, p2, p3, p4])
-    }
-}
-let interval = () => {
-    ground(.25)
-}
-timer.startInterval(interval)
+let p1 = [.5, .75]
+let p2 = [.75, .75]
+let p3 = [.75, .5]
+let p4 = [.5, .5]
+
+brush.presets("pencil")
+brush.isPaint = false
+brush.weight = 30
+brush.line([p1, p2, p3, p4])
+
+brush.presets("eraser")
+brush.weight = 8
+brush.isPaint = false
+brush.line([p1, p2, p3, p4])
+
+brush.presets("pen")
+brush.isPaint = false
+brush.line([p1, p2, p3, p4])
